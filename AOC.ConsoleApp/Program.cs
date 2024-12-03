@@ -13,7 +13,7 @@ static IEnumerable<string> ReadLines(string fileName)
     var lines = new List<string>();
 
     var reader = new StreamReader(fileName);
-    for (var line = reader.ReadLine(); line != null; line = reader.ReadLine())
+    while (reader.ReadLine() is string line)
     {
         lines.Add(line);
     }
