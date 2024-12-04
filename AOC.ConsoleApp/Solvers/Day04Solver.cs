@@ -18,7 +18,37 @@ public class Day04Solver : ISolver
 
     public string SolveSecondChallenge(IEnumerable<string> lines)
     {
-        throw new NotImplementedException();
+        var grid = new Grid<char>(lines.Select(line => line.ToCharArray()));
+
+        var totalCount = 0;
+        foreach (var position in grid)
+        {
+            if (IsAOfXMas(position)) totalCount++;
+        }
+        return totalCount.ToString();
+    }
+
+    private bool IsAOfXMas(GridPosition<char> position)
+    {
+        if (position.Value != 'A') return false;
+
+        var topLeft = position.GetNeighbour(-1, -1);
+        var topRight = position.GetNeighbour(-1, 1);
+        var bottomLeft = position.GetNeighbour(1, -1);
+        var bottomRight = position.GetNeighbour(1, 1);
+
+        if (!topLeft.IsValidPosition || !topRight.IsValidPosition || !bottomLeft.IsValidPosition || !bottomRight.IsValidPosition)
+            return false;
+
+        if (!(topLeft.Value == 'M' && bottomRight.Value == 'S')
+            && !(topLeft.Value == 'S' && bottomRight.Value == 'M'))
+            return false;
+
+        if (!(topRight.Value == 'M' && bottomLeft.Value == 'S')
+            && !(topRight.Value == 'S' && bottomLeft.Value == 'M'))
+            return false;
+
+        return true;
     }
 
     private int CountHowManyTimesItIsTheXOfXmas(GridPosition<char> position)
