@@ -1,8 +1,8 @@
 ﻿using AOC.ConsoleApp.Solvers;
 
-ISolver solver = new Day03Solver();
+ISolver solver = new Day04Solver();
 
-var lines = ReadLines("../../../Inputs/03.txt");
+var lines = ReadLines("../../../Inputs/04.txt");
 Console.WriteLine($"First solution: {solver.SolveFirstChallenge(lines)}");
 Console.WriteLine($"Second solution: {solver.SolveSecondChallenge(lines)}");
 
