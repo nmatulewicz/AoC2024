@@ -19,6 +19,11 @@ public struct Grid<T> : IEnumerable<GridPosition<T>>
         return _grid[row][column];
     }
 
+    public void SetValue(int row, int column, T value)
+    {
+        _grid[row][column] = value;
+    }
+
     public GridPosition<T> GetPosition(int row, int column)
     {
         return new GridPosition<T>(row, column, this);

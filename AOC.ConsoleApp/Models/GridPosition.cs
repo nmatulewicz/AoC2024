@@ -2,7 +2,12 @@
 
 public struct GridPosition<T>
 {
-    public T Value => _grid.GetValue(_row, _column);
+    public T Value
+    {
+        get => _grid.GetValue(_row, _column);
+        set => _grid.SetValue(_row, _column, value);
+    }
+
     public bool IsValidPosition => _row >= 0
             && _row < _grid.NumberOfRows
             && _column >= 0
