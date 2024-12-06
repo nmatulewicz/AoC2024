@@ -27,6 +27,23 @@ public class Day05Solver : ISolver
         return validOrderings.Select(ordering => ordering.MiddlePage.PageNumber).Sum().ToString();
     }
 
+    public string SolveSecondChallenge(string[] lines)
+    {
+        var emptyLineIndex = GetIndexEmptyLine(lines);
+
+        var pageOrderingRules = lines[..emptyLineIndex].Select(GetPageOrderigRule);
+
+        var pageOrderings = GetPageOrderings(lines[(emptyLineIndex + 1)..], pageOrderingRules);
+
+        var invalidOrderings = pageOrderings.Where(ordering => !ordering.IsValid());
+
+        var fixedOrderings = invalidOrderings.Select(ordering => ordering.GetFixedOrdering());
+
+        var middlePagesAfterFixingOrdering = fixedOrderings.Select(ordering => ordering.MiddlePage.PageNumber);
+
+        return middlePagesAfterFixingOrdering.Sum().ToString();
+    }
+
     private IEnumerable<PageOrdering> GetPageOrderings(string[] lines, IEnumerable<(int, int)> rules)
     {
         var pageOrderings = new List<PageOrdering>();
@@ -37,11 +54,6 @@ public class Day05Solver : ISolver
             pageOrderings.Add(pageOrdering);
         }
         return pageOrderings;
-    }
-
-    public string SolveSecondChallenge(string[] lines)
-    {
-        throw new NotImplementedException();
     }
 
     private (int, int) GetPageOrderigRule(string line)
