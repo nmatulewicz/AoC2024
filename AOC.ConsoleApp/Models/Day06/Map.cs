@@ -5,20 +5,25 @@ namespace AOC.ConsoleApp.Models.Day06;
 
 public class Map
 {
-    private const char OBSTACLE = '#';
-    private const char EXPLORED_LOCATION = 'X';
+    public const char OBSTACLE = '#';
+    public const char EXPLORED_LOCATION = 'X';
 
     public bool IsCurrentLocationOutsideTheMap => !_currentLocation.IsValidPosition;
+    public bool HasEnteredLoop => _currentLocation.IsValidPosition && _usedEnteringDirectionsPerExploredLocation[(_currentLocation.Row, _currentLocation.Column)].Contains(_currentDirection);
 
     private Grid<char> _map;
     private GridPosition<char> _currentLocation;
     private Direction _currentDirection;
+    private Direction _enteringDirection;
+    private Dictionary<(int, int), List<Direction>> _usedEnteringDirectionsPerExploredLocation;
 
     public Map(IEnumerable<IEnumerable<char>> map)
     {
         _map = new Grid<char>(map);
         _currentLocation = GetStartLocation();
         _currentDirection = Direction.Up;
+
+        _usedEnteringDirectionsPerExploredLocation = _map.ToDictionary(position => (position.Row, position.Column), position => new List<Direction>());
     }
 
     public void Move()
@@ -31,7 +36,12 @@ public class Map
 
     public int CountExploredLocations()
     {
-        return _map.Count(position => position.Value == EXPLORED_LOCATION);
+        return GetExploredLocations().Count();
+    }
+
+    public IEnumerable<GridPosition<char>> GetExploredLocations()
+    {
+        return _map.Where(position => position.Value == EXPLORED_LOCATION); 
     }
 
     private GridPosition<char> GetStartLocation()
@@ -66,7 +76,10 @@ public class Map
         if (IsObstacle(nextLocation)) return false;
 
         _currentLocation.Value = EXPLORED_LOCATION;
+        _usedEnteringDirectionsPerExploredLocation[(_currentLocation.Row, _currentLocation.Column)].Add(_enteringDirection);
+        
         _currentLocation = nextLocation;
+        _enteringDirection = _currentDirection;
         return true;
     }
 
@@ -74,12 +87,4 @@ public class Map
     {
         return position.IsValidPosition && position.Value == OBSTACLE;
     }
-}
-
-public enum Direction
-{
-    Up,  
-    Down, 
-    Left, 
-    Right,
 }

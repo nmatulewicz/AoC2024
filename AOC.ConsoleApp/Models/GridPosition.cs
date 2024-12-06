@@ -2,32 +2,32 @@
 
 public struct GridPosition<T>
 {
+    public readonly int Row;
+    public readonly int Column;
     public T Value
     {
-        get => _grid.GetValue(_row, _column);
-        set => _grid.SetValue(_row, _column, value);
+        get => _grid.GetValue(Row, Column);
+        set => _grid.SetValue(Row, Column, value);
     }
 
-    public bool IsValidPosition => _row >= 0
-            && _row < _grid.NumberOfRows
-            && _column >= 0
-            && _column < _grid.NumberOfColumns;
+    public bool IsValidPosition => Row >= 0
+            && Row < _grid.NumberOfRows
+            && Column >= 0
+            && Column < _grid.NumberOfColumns;
 
     private readonly Grid<T> _grid;
-    private readonly int _row;
-    private readonly int _column;
 
     public GridPosition(int row, int column, Grid<T> grid)
     {
-        _row = row;
-        _column = column;
+        Row = row;
+        Column = column;
         _grid = grid;
     }
 
     public GridPosition<T> GetNeighbour(int rowOffset, int columnOffset)
     {
-        var neighbourRow = _row + rowOffset;
-        var neighbourColumn = _column + columnOffset;
+        var neighbourRow = Row + rowOffset;
+        var neighbourColumn = Column + columnOffset;
         
         return new GridPosition<T>(neighbourRow, neighbourColumn, _grid);
     }
