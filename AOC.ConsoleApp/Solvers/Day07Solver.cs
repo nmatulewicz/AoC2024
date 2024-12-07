@@ -23,10 +23,10 @@ public class Day07Solver(IEnumerable<string> lines) : AbstractSolver(lines)
         foreach (var line in lines)
         {
             var splitTestValueFromNumbers = line.Split(": ");
-            var testValue = int.Parse(splitTestValueFromNumbers[0]);
+            var testValue = long.Parse(splitTestValueFromNumbers[0]);
             var numberStrings = splitTestValueFromNumbers[1];
             var numbers = numberStrings.Split(' ').Select(int.Parse).ToArray();
-            equations.Add(new Equation { TestValue = testValue, Numbers = numbers });
+            equations.Add(new Equation(testValue, numbers));
         }
         return equations;
     }

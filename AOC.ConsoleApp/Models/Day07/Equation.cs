@@ -1,13 +1,34 @@
 ﻿
 namespace AOC.ConsoleApp.Models.Day07;
 
-public record Equation
+public record Equation(long TestValue, int[] Numbers)
 {
-    public int TestValue { get; init; }
-    public int[] Numbers { get; init; }
+    public long TestValue = TestValue;
+    public int[] Numbers = Numbers;
 
     public bool IsSolvable()
     {
-        throw new NotImplementedException();
+        if (Numbers.Length == 1)
+        {
+            return TestValue == Numbers[0];
+        }
+
+        return IsSolvableUsingMultiplication() || IsSolvableUsingAddition();
     }
+
+    private bool IsSolvableUsingAddition()
+    {
+        var currentNumber = Numbers[^1];
+        return TestValue - currentNumber >= 0
+            && new Equation(TestValue - currentNumber, Numbers[..^1]).IsSolvable();
+    }
+
+    private bool IsSolvableUsingMultiplication()
+    {
+        var currentNumber = Numbers[^1];
+        return TestValue % currentNumber == 0
+            && new Equation(TestValue / currentNumber, Numbers[..^1]).IsSolvable();
+    }
+
+
 }
