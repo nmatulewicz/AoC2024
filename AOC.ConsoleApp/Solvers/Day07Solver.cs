@@ -14,7 +14,10 @@ public class Day07Solver(IEnumerable<string> lines) : AbstractSolver(lines)
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        var solvableEquations = _equations.Where(equation => equation.IsSolvable(includeThirdOperator: true));
+        return solvableEquations.Sum(equation => equation.TestValue).ToString();
+
+        // 268292848072 --> too low
     }
 
     private static List<Equation> GetEquations(IEnumerable<string> lines)
