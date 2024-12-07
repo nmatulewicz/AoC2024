@@ -1,7 +1,6 @@
 ﻿using AOC.ConsoleApp.Models;
 
 namespace AOC.ConsoleApp.Solvers;
-
 public class Day04Solver : ISolver
 {
     public string SolveFirstChallenge(IEnumerable<string> lines)

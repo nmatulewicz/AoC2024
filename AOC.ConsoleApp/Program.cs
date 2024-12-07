@@ -1,10 +1,10 @@
 ﻿using AOC.ConsoleApp.Solvers;
 
-ISolver solver = new Day06Solver();
-
 var lines = ReadLines("../../../Inputs/06.txt");
-Console.WriteLine($"First solution: {solver.SolveFirstChallenge(lines)}");
-Console.WriteLine($"Second solution: {solver.SolveSecondChallenge(lines)}");
+AbstractSolver solver = new Day07Solver(lines);
+
+Console.WriteLine($"First solution: {solver.SolveFirstChallenge()}");
+Console.WriteLine($"Second solution: {solver.SolveSecondChallenge()}");
 
 static IEnumerable<string> ReadLines(string fileName)
 {
