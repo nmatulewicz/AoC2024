@@ -18,6 +18,7 @@ public class Day07Solver(IEnumerable<string> lines) : AbstractSolver(lines)
         return solvableEquations.Sum(equation => equation.TestValue).ToString();
 
         // 268292848072 --> too low
+        // 268292848072
     }
 
     private static List<Equation> GetEquations(IEnumerable<string> lines)
