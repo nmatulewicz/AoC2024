@@ -1,7 +1,8 @@
-﻿namespace AOC.ConsoleApp.Models.Day09;
+﻿
+namespace AOC.ConsoleApp.Models.Day09;
 
 public class Disk
-{
+{   
     public DiskPosition[] Positions;
 
     public Disk(int[] diskMap)
@@ -28,6 +29,58 @@ public class Disk
 
             nextFreeSpacePosition++;
             nextFilePostionToMove--;
+        }
+    }
+
+    public void RearrangeFilesPart2()
+    {
+        var nextFilePostionToMove = Positions.Length - 1;
+        while (nextFilePostionToMove > 0)
+        {
+            while (!Positions[nextFilePostionToMove].IsFile) nextFilePostionToMove--;
+            var idOfFileToMove = Positions[nextFilePostionToMove].IdNumber!.Value;
+            var lastIndexOfFileTooMove = nextFilePostionToMove;
+            var firstIndexOfFileToMove = nextFilePostionToMove;
+            while (firstIndexOfFileToMove > 0 && Positions[firstIndexOfFileToMove - 1].IdNumber == idOfFileToMove) firstIndexOfFileToMove--;
+            var fileSize = lastIndexOfFileTooMove - firstIndexOfFileToMove + 1;
+
+            var success = TryFindFreeSpaceOfAtLeastLength(fileSize, out var startIndexFreeSpace);
+            if (success && startIndexFreeSpace < firstIndexOfFileToMove)
+            {
+                foreach (var position in Positions[startIndexFreeSpace..(startIndexFreeSpace + fileSize)])
+                {
+                    position.FillWithId(idOfFileToMove);
+                }
+                foreach (var position in Positions[firstIndexOfFileToMove..(lastIndexOfFileTooMove + 1)])
+                {
+                    position.RemoveFile();
+                }
+            }
+
+            nextFilePostionToMove = firstIndexOfFileToMove - 1;
+        }
+    }
+
+    private bool TryFindFreeSpaceOfAtLeastLength(int fileSize, out int startIndex)
+    {
+        startIndex = 0;
+        while (true)
+        {
+            while (startIndex < Positions.Length 
+                && !Positions[startIndex].IsFreeSpace) 
+                startIndex++;
+
+            if (startIndex >= Positions.Length) return false;
+
+            var lastIndexFreeSpace = startIndex;
+            while (lastIndexFreeSpace + 1 < Positions.Length
+                && Positions[lastIndexFreeSpace + 1].IsFreeSpace) lastIndexFreeSpace++;
+
+            var freeSpacelength = lastIndexFreeSpace - startIndex + 1;
+            if (freeSpacelength >= fileSize) return true;
+            if (lastIndexFreeSpace + 1 >= Positions.Length) return false;
+
+            startIndex = lastIndexFreeSpace + 1;
         }
     }
 

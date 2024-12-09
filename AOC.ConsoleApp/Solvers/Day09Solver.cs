@@ -9,6 +9,11 @@ public class Day09Solver : AbstractSolver
 
     public Day09Solver(IEnumerable<string> lines) : base(lines)
     {
+        SetDisk(lines);
+    }
+
+    private void SetDisk(IEnumerable<string> lines)
+    {
         var line = lines.First();
         var diskMap = line.ToArray().Select(x => x.ToString()).Select(int.Parse).ToArray();
         _disk = new Disk(diskMap);
@@ -16,14 +21,15 @@ public class Day09Solver : AbstractSolver
 
     public override string SolveFirstChallenge()
     {
+        SetDisk(_lines);
         _disk.RearrangeFiles();
         return _disk.CalculateChecksum().ToString();
-
-        // 1327300675292 --> Too low 
     }
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        SetDisk(_lines);
+        _disk.RearrangeFilesPart2();
+        return _disk.CalculateChecksum().ToString();
     }
 }
