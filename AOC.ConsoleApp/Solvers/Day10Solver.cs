@@ -13,13 +13,25 @@ public class Day10Solver : AbstractSolver
 
     public override string SolveFirstChallenge()
     {
+        return GetTotalTrailheadCount(onlyCountDistinctEndPositions: true);
+    }
+
+    public override string SolveSecondChallenge()
+    {
+        return GetTotalTrailheadCount();
+    }
+
+    private string GetTotalTrailheadCount(bool onlyCountDistinctEndPositions = false)
+    {
         var zeros = _grid.Where(position => position.Value == '0');
 
         int totalTrailheadCount = 0;
         foreach (var zeroPosition in zeros)
         {
             var reachableNines = GetReachableNines(zeroPosition);
-            var trailheadCount = reachableNines.Distinct().Count();
+            var trailheadCount = onlyCountDistinctEndPositions
+                ? reachableNines.Distinct().Count()
+                : reachableNines.Count();
             totalTrailheadCount += trailheadCount;
         }
         return totalTrailheadCount.ToString();
@@ -36,10 +48,5 @@ public class Day10Solver : AbstractSolver
             .Where(neighbour => int.Parse(neighbour.Value.ToString()) == nextNumber);
 
         return neighboursToFurtherInvestigate.SelectMany(GetReachableNines);
-    }
-
-    public override string SolveSecondChallenge()
-    {
-        throw new NotImplementedException();
     }
 }
