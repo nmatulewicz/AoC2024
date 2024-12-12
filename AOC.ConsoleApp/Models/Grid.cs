@@ -2,7 +2,13 @@
 
 namespace AOC.ConsoleApp.Models;
 
-public struct Grid<T> : IEnumerable<GridPosition<T>>
+public class Grid : Grid<char>
+{
+    public Grid(IEnumerable<IEnumerable<char>> data) : base(data)
+    {
+    }
+}
+public class Grid<T> : IEnumerable<GridPosition<T>>
 {
     public int NumberOfRows => _grid.Length;
     public int NumberOfColumns => _grid[0].Length;

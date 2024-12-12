@@ -1,6 +1,6 @@
 ﻿namespace AOC.ConsoleApp.Models;
 
-public struct GridPosition<T>
+public class GridPosition<T> : IEquatable<GridPosition<T>>
 {
     public readonly int Row;
     public readonly int Column;
@@ -35,5 +35,39 @@ public struct GridPosition<T>
     public GridPosition<T> GetNeighbour((int, int) offset)
     {
         return GetNeighbour(offset.Item1, offset.Item2);
+    }
+
+    public IEnumerable<GridPosition<T>> GetAllDirectNeighbours(bool includeDiagonalNeigbours = false)
+    {
+        var offsets = new List<(int, int)> { (0, -1), (0, 1), (1, 0), (-1, 0) };
+        if (includeDiagonalNeigbours) offsets.AddRange([ (1, -1),(1, 1), (-1, -1), (-1, 1)]);
+
+        return offsets
+            .Select(GetNeighbour)
+            .Where(neighbouringPosition => neighbouringPosition.IsValidPosition);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is GridPosition<T> other && Equals(other);
+    }
+
+    public override string ToString()
+    {
+        return $"({Row}, {Column}): {Value}";
+    }
+
+    public bool Equals(GridPosition<T>? other)
+    {
+        if (other == null) return false;
+
+        return Column == other.Column
+            && Row == other.Row
+            && _grid == other._grid;
+    }
+
+    public override int GetHashCode()
+    {
+        return Row.GetHashCode() ^ Column.GetHashCode();
     }
 }
