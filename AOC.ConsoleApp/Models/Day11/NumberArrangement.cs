@@ -40,6 +40,5 @@ public record NumberArrangement
             .Select(grouping => (grouping.Key, grouping.Select(tuple => tuple.count).Sum()));
 
         BlinksLeft--;
-        Console.WriteLine(string.Join(" ", Arrangement));
     }
 }
