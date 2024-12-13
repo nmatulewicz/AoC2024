@@ -4,35 +4,42 @@ public record NumberArrangement
 {
     public NumberArrangement(IEnumerable<long> arrangement, int blinksLeft)
     {
-        Arrangement = arrangement;
+        Arrangement = arrangement
+            .GroupBy(number => number)
+            .Select(grouping => (grouping.Key, (long)grouping.Count()));
         BlinksLeft = blinksLeft;
     }
 
-    public IEnumerable<long> Arrangement { get; private set; }
+    public IEnumerable<(long number, long count)> Arrangement { get; private set; }
     public int BlinksLeft { get; private set; }
     
     public void Blink()
     {
-        var arrangement = Arrangement.SelectMany(number =>
+        var arrangement = Arrangement.SelectMany(tuple =>
         {
-            if (number == 0) return new List<long> { 1 };
+            if (tuple.number == 0) return new List<(long number, long count)> { (1, tuple.count) };
 
-            var numberString = number.ToString();
+            var numberString = tuple.number.ToString();
             if (numberString.Length % 2 == 0)
             {
                 var splitIndex = numberString.Length / 2;
                 return [
-                    long.Parse(numberString.Substring(0, splitIndex)),
-                    long.Parse(numberString.Substring(splitIndex)),
+                    (long.Parse(numberString.Substring(0, splitIndex)), tuple.count),
+                    (long.Parse(numberString.Substring(splitIndex)), tuple.count)
                 ];
             }
 
             else
             {
-                return [number * 2024];
+                return [(tuple.number * 2024, tuple.count)];
             }
         });
+
+        Arrangement =  arrangement
+            .GroupBy(tuple => tuple.number)
+            .Select(grouping => (grouping.Key, grouping.Select(tuple => tuple.count).Sum()));
+
         BlinksLeft--;
-        Arrangement = arrangement;
+        Console.WriteLine(string.Join(" ", Arrangement));
     }
 }
