@@ -5,32 +5,30 @@ namespace AOC.ConsoleApp.Solvers;
 
 public class Day12Solver : AbstractSolver
 {
-    private Grid<Plant> _garden;
+    private IEnumerable<Region> _regions;
     public Day12Solver(IEnumerable<string> lines) : base(lines)
     {
         var plants = lines.Select(line => line.Select(character => new Plant(type: character)));
-        _garden = new Grid<Plant>(plants);
+        var garden = new Grid<Plant>(plants);
+        AssignRegions(garden);
+        _regions = garden.Select(position => position.Value.Region!).Distinct();
     }
 
     public override string SolveFirstChallenge()
     {
-        AssignRegions();
-        var regions = _garden.Select(position => position.Value.Region).Distinct();
-        var totalPrice = regions.Sum(region => region!.GetPrice());
+        var totalPrice = _regions.Sum(region => region!.GetPrice());
         return totalPrice.ToString();
-
-        // 8788748 ==> Too high
-        // 1477538 ==> Too low
     }
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        var totalDiscountPrice = _regions.Sum(region => region!.GetDiscountPrice());
+        return totalDiscountPrice.ToString();
     }
 
-    private void AssignRegions()
+    private void AssignRegions(Grid<Plant> garden)
     {
-        foreach (var plantPosition in _garden)
+        foreach (var plantPosition in garden)
         {
             var plant = plantPosition.Value;
             var neighbouringRegionsWithSamePlantType = plantPosition
@@ -40,7 +38,6 @@ public class Day12Solver : AbstractSolver
                 .Where(neighbour => neighbour.Type == plant.Type)
                 .Select(neighbour => neighbour.Region)
                 .Distinct();
-
 
             switch (neighbouringRegionsWithSamePlantType.ToList())
             {
