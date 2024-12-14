@@ -16,7 +16,7 @@ public class GridEnumerator<T> : IEnumerator<GridPosition<T>>
     {
         _grid = grid;
         _currentRow = 0;
-        _currentColumn = 0;
+        _currentColumn = -1;
     }
 
     public void Dispose()

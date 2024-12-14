@@ -20,6 +20,12 @@ public class Day12Solver : AbstractSolver
         return totalPrice.ToString();
 
         // 8788748 ==> Too high
+        // 1477538 ==> Too low
+    }
+
+    public override string SolveSecondChallenge()
+    {
+        throw new NotImplementedException();
     }
 
     private void AssignRegions()
@@ -52,10 +58,5 @@ public class Day12Solver : AbstractSolver
                     throw new NotImplementedException("Unexpected situation.");
             }
         }
-    }
-
-    public override string SolveSecondChallenge()
-    {
-        throw new NotImplementedException();
     }
 }

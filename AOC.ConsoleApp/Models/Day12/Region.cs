@@ -39,7 +39,7 @@ public class Region
             perimeter += outsideBorderCount;
             foreach (var neighbour in neighbours)
             {
-                if (neighbour.Value != position.Value) perimeter++;
+                if (neighbour.Value.Type != position.Value.Type) perimeter++;
             }
         }
         return perimeter;
@@ -48,6 +48,11 @@ public class Region
     public int GetPrice()
     {
         return GetArea() * GetPerimeter();
+    }
+
+    public int GetDiscountPrice()
+    {
+        throw new NotImplementedException();
     }
 
     public void AddGridPosition(GridPosition<Plant> position)
