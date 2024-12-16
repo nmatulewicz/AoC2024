@@ -1,5 +1,4 @@
 ﻿using AOC.ConsoleApp.Models.Day13;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AOC.ConsoleApp.Solvers;
 
@@ -26,7 +25,12 @@ public class Day13Solver : AbstractSolver
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        foreach (var machine in _machines)
+        {
+            machine.Prize.X += 10_000_000_000_000;
+            machine.Prize.Y += 10_000_000_000_000;
+        }
+        return SolveFirstChallenge();
     }
 
     private IEnumerable<ClawMachine> GetClawMachines(string[] lines)

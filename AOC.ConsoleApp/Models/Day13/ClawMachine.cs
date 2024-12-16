@@ -18,7 +18,7 @@ public class ClawMachine
         Prize = prize;
     }
 
-    public bool TryWinPrize(out int countA, out int countB)
+    public bool TryWinPrize(out long countA, out long countB)
     {
         var countBNumerator = ButtonA.DeltaX * Prize.Y - ButtonA.DeltaY * Prize.X;
         var countBDenominator = ButtonA.DeltaX * ButtonB.DeltaY - ButtonA.DeltaY * ButtonB.DeltaX;
