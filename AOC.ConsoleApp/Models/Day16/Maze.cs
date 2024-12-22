@@ -1,7 +1,4 @@
-﻿
-using System.Reflection.Emit;
-
-namespace AOC.ConsoleApp.Models.Day16;
+﻿namespace AOC.ConsoleApp.Models.Day16;
 
 public class Maze
 {
@@ -51,6 +48,39 @@ public class Maze
         }
 
         throw new Exception("Something went wrong. Priority queue should not be empty before finding end position.");
+    }
+
+    public IEnumerable<IEnumerable<GridPosition<char>>> FindAllShortestPaths()
+    {
+        var shortestPathScore = FindLowestPossibleScore();
+
+        var queue = new Queue<(IEnumerable<GridPosition<char>> path, Direction incomingDirection, int score)>();
+        queue.Enqueue(([_startPosition], Direction.Right, 0));
+
+        var shortestPaths = new List<IEnumerable<GridPosition<char>>>();
+        while (queue.Count > 0)
+        {
+            var (path, incomingDirection, score) = queue.Dequeue();
+            var currentPosition = path.Last();
+
+            if (IsEnd(currentPosition) && score == shortestPathScore) shortestPaths.Add(path);
+
+            foreach (var outgoingDirection in Enum.GetValues<Direction>())
+            {
+                var nextPosition = currentPosition.GetNeighbour(outgoingDirection.ToOffset());
+                if (!nextPosition.IsValidPosition || IsWall(nextPosition)) continue;
+                if (path.Any(position => position.Row == nextPosition.Row && position.Column == nextPosition.Column)) continue;
+                
+                var currentScoreOfNextPosition = _scorePerGridPositionAndIncomingDirection[(nextPosition, outgoingDirection)];
+                var newScoreOfNextPosition = outgoingDirection == incomingDirection ? score + 1 : score + 1001;
+
+                if (newScoreOfNextPosition > currentScoreOfNextPosition) continue;
+                if (newScoreOfNextPosition > shortestPathScore) continue;
+
+                queue.Enqueue((path.Append(nextPosition), outgoingDirection, newScoreOfNextPosition));
+            }
+        }
+        return shortestPaths;
     }
 
     private bool IsEnd(GridPosition<char> position)

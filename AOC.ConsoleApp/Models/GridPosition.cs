@@ -29,7 +29,7 @@ public class GridPosition<T> : IEquatable<GridPosition<T>>
         var neighbourRow = Row + rowOffset;
         var neighbourColumn = Column + columnOffset;
         
-        return new GridPosition<T>(neighbourRow, neighbourColumn, _grid);
+        return _grid.GetPosition(neighbourRow, neighbourColumn);
     }
 
     public GridPosition<T> GetNeighbour((int, int) offset)
