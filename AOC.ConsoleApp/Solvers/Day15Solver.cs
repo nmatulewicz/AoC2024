@@ -7,11 +7,13 @@ namespace AOC.ConsoleApp.Solvers;
 public class Day15Solver : AbstractSolver
 {
     private Warehouse _warehouse;
+    private Warehouse _wideWarehouse;
     private IEnumerable<Direction> _moves;
 
     public Day15Solver(IEnumerable<string> lines) : base(lines)
     {
         _warehouse = GetWarehouse(lines);
+        _wideWarehouse = GetWideWarehouse(lines);
         _moves = GetMoves(lines);
     }
 
@@ -28,7 +30,13 @@ public class Day15Solver : AbstractSolver
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        foreach (var direction in _moves)
+        {
+            _wideWarehouse.TryMoveRobot(direction);
+        }
+
+        var gpsCoordinates = _wideWarehouse.GetAllBoxesGpsCoordinates();
+        return gpsCoordinates.Sum().ToString();
     }
 
     private IEnumerable<Direction> GetMoves(IEnumerable<string> lines)
@@ -55,6 +63,24 @@ public class Day15Solver : AbstractSolver
         {
             if (string.IsNullOrEmpty(line)) break;
             gridInputLines.Add(line);
+        }
+        var grid = new Grid(gridInputLines);
+        return new Warehouse(grid);
+    }
+
+    private Warehouse GetWideWarehouse(IEnumerable<string> lines)
+    {
+        var gridInputLines = new List<string>();
+
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrEmpty(line)) break;
+            var wideLine = line
+                .Replace("#", "##")
+                .Replace("O", "[]")
+                .Replace(".", "..")
+                .Replace("@", "@.");
+            gridInputLines.Add(wideLine);
         }
         var grid = new Grid(gridInputLines);
         return new Warehouse(grid);
