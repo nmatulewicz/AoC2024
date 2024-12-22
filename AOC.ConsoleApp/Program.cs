@@ -1,7 +1,9 @@
 ﻿using AOC.ConsoleApp.Solvers;
 
-var lines = ReadLines("../../../Inputs/14.txt");
-AbstractSolver solver = new Day14Solver(lines);
+var lines = ReadLines("../../../Inputs/14_small.txt");
+var solver = new Day14Solver(lines);
+solver.SpaceTallness = 7;
+solver.SpaceWidth = 11;
 
 Console.WriteLine($"First solution: {solver.SolveFirstChallenge()}");
 Console.WriteLine($"Second solution: {solver.SolveSecondChallenge()}");

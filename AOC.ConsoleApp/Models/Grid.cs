@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Text;
 
 namespace AOC.ConsoleApp.Models;
 
@@ -7,13 +9,23 @@ public class Grid : Grid<char>
     public Grid(IEnumerable<IEnumerable<char>> data) : base(data)
     {
     }
+
+    public override string ToString()
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (var row in _grid)
+        {
+            stringBuilder.AppendLine(new string(row));
+        }
+        return stringBuilder.ToString();
+    }
 }
 public class Grid<T> : IEnumerable<GridPosition<T>>
 {
     public int NumberOfRows => _grid.Length;
     public int NumberOfColumns => _grid[0].Length;
 
-    private T[][] _grid { get; set; }
+    protected T[][] _grid { get; set; }
 
     public Grid(IEnumerable<IEnumerable<T>> data)
     {

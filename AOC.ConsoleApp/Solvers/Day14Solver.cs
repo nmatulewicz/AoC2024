@@ -1,4 +1,5 @@
-﻿using AOC.ConsoleApp.Models.Day14;
+﻿using AOC.ConsoleApp.Models;
+using AOC.ConsoleApp.Models.Day14;
 
 namespace AOC.ConsoleApp.Solvers;
 
@@ -42,13 +43,55 @@ public class Day14Solver : AbstractSolver
             .Where(grouping => grouping.Key is not null)
             .Select(grouping => grouping.Count());
         return countsPerQuadrant.Aggregate((total, next) => total * next).ToString();
-
-        // 60507 -> Too low
-        // 217407960 -> Too low
     }
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        for (int i = 0; true; i++)
+        {
+            var endPositions = _robots.Select(robot => robot.PositionAfterNSeconds(i));
+            var uniqueEndPositions = endPositions.DistinctBy(position => (position.X, position.Y));
+            //var positionsGroupedByQuadrant = endPositions.GroupBy(position => position.GetQuadrantId());
+            //var countsPerQuadrant = positionsGroupedByQuadrant
+            //    .Where(grouping => grouping.Key is not null)
+            //    .Select(grouping => grouping.Count());
+
+            
+            var quadrants = uniqueEndPositions
+                .Select(position => position.GetQuadrantId())
+                .Where(quadrant => quadrant.HasValue)
+                .Select(quadrant => quadrant!.Value);
+            var countQuadrant1 = quadrants.Count(quadrant => quadrant is 1);
+            var countQuadrant2 = quadrants.Count(quadrant => quadrant is 2);
+            var countQuadrant3 = quadrants.Count(quadrant => quadrant is 3);
+            var countQuadrant4 = quadrants.Count(quadrant => quadrant is 4);
+            DrawTree(endPositions);
+            Console.WriteLine("Aantal iteraties: " + i);
+
+            //var positionsQuadrant1 = uniqueEndPositions.Where(position => position.GetQuadrantId() is 1 or 3);
+            //if (positionsQuadrant1.All(position1 => uniqueEndPositions
+            //    .Any(position2 => position1.Y == position2.Y && position2.X == SpaceWidth - 1 - position1.X)))
+            //{
+            //    DrawTree(endPositions);
+            //    Console.WriteLine("Aantal iteraties: " + i);
+            //}
+        }
+    }
+
+    private void DrawTree(IEnumerable<Position> endPositions)
+    {
+        var data = new List<string>();  
+        for (var i = 0; i < SpaceTallness; i++)
+        {
+            data.Add(new string('.', SpaceWidth));
+        }
+
+        var grid = new Grid(data);
+
+        foreach (var position in endPositions)
+        {
+            grid.SetValue(position.Y, position.X, '*');
+        }
+        Console.WriteLine(grid.ToString());
     }
 }
