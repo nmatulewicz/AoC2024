@@ -24,7 +24,7 @@ public class Warehouse
 
     public IEnumerable<int> GetAllBoxesGpsCoordinates()
     {
-        return _map.Where(IsBox).Select(GetGpsCoordinate);
+        return _map.Where(position => position.Value is BOX or WIDE_BOX_LEFT).Select(GetGpsCoordinate);
     }
 
     public static int GetGpsCoordinate(GridPosition<char> position) 
@@ -54,7 +54,60 @@ public class Warehouse
         return true;
     }
 
-    private bool TryMoveWideBox(GridPosition<char> postitionBox, Direction direction)
+    private bool TryMoveWideBox(GridPosition<char> positionBox, Direction direction)
+    {
+        if (direction is Direction.Up or Direction.Down) return TryMoveWideBoxUpOrDown(positionBox, direction);
+        if (direction is Direction.Left) return TryMoveWideBoxLeft(positionBox);
+        else return TryMoveWideBoxRight(positionBox);
+    }
+
+    private bool TryMoveWideBoxLeft(GridPosition<char> positionBox)
+    {
+        var currentBoxLeftPosition = positionBox.Value is WIDE_BOX_LEFT
+            ? positionBox
+            : positionBox.GetNeighbour(Direction.Left.ToOffset());
+        var currentBoxRightPosition = currentBoxLeftPosition.GetNeighbour(Direction.Right.ToOffset());
+
+        var nextLeftPosition = currentBoxLeftPosition.GetNeighbour(Direction.Left.ToOffset());
+        if (IsWall(nextLeftPosition)) return false;
+        if (IsWideBox(nextLeftPosition) && !TryMoveWideBoxLeft(nextLeftPosition)) return false;
+
+        MoveWideBoxLeft(currentBoxLeftPosition, currentBoxRightPosition, Direction.Left);
+        return true;
+    }
+
+    private bool TryMoveWideBoxRight(GridPosition<char> positionBox)
+    {
+        var currentBoxLeftPosition = positionBox.Value is WIDE_BOX_LEFT
+            ? positionBox
+            : positionBox.GetNeighbour(Direction.Left.ToOffset());
+        var currentBoxRightPosition = currentBoxLeftPosition.GetNeighbour(Direction.Right.ToOffset());
+
+        var nextRightPosition = currentBoxRightPosition.GetNeighbour(Direction.Right.ToOffset());
+        if (IsWall(nextRightPosition)) return false;
+        if (IsWideBox(nextRightPosition) && !TryMoveWideBoxRight(nextRightPosition)) return false;
+
+        MoveWideBoxRight(currentBoxLeftPosition, currentBoxRightPosition, Direction.Right);
+        return true;
+    }
+
+    private void MoveWideBoxLeft(GridPosition<char> currentBoxLeftPosition, GridPosition<char> currentBoxRightPosition, Direction left)
+    {
+        var nextBoxLeftPosition = currentBoxLeftPosition.GetNeighbour(Direction.Left.ToOffset());
+        nextBoxLeftPosition.Value = WIDE_BOX_LEFT;
+        currentBoxLeftPosition.Value = WIDE_BOX_RIGHT;
+        currentBoxRightPosition.Value = EMPTY_SPACE;
+    }
+
+    private void MoveWideBoxRight(GridPosition<char> currentBoxLeftPosition, GridPosition<char> currentBoxRightPosition, Direction right)
+    {
+        var nextBoxRightPosition = currentBoxRightPosition.GetNeighbour(Direction.Right.ToOffset());
+        nextBoxRightPosition.Value = WIDE_BOX_RIGHT;
+        currentBoxRightPosition.Value = WIDE_BOX_LEFT;
+        currentBoxLeftPosition.Value = EMPTY_SPACE;
+    }
+
+    private bool TryMoveWideBoxUpOrDown(GridPosition<char> postitionBox, Direction direction)
     {
         GridPosition<char> currentLeftPosition, currentRightPosition;
         if (postitionBox.Value is WIDE_BOX_LEFT)
@@ -73,11 +126,11 @@ public class Warehouse
             return false;
         }
 
-        MoveWideBox(currentLeftPosition, currentRightPosition, direction);
+        MoveWideBoxUpOrDown(currentLeftPosition, currentRightPosition, direction);
         return true;
     }
 
-    private void MoveWideBox(GridPosition<char> currentLeftPosition, GridPosition<char> currentRightPosition, Direction direction)
+    private void MoveWideBoxUpOrDown(GridPosition<char> currentLeftPosition, GridPosition<char> currentRightPosition, Direction direction)
     {
         var nextLeftPosition = currentLeftPosition.GetNeighbour(direction.ToOffset());
         var nextRightPosition = currentRightPosition.GetNeighbour(direction.ToOffset());
@@ -87,17 +140,17 @@ public class Warehouse
             case (EMPTY_SPACE, EMPTY_SPACE):
                 break;
             case (WIDE_BOX_LEFT, WIDE_BOX_RIGHT):
-                MoveWideBox(nextLeftPosition, nextRightPosition, direction);
+                MoveWideBoxUpOrDown(nextLeftPosition, nextRightPosition, direction);
                 break;
             case (WIDE_BOX_RIGHT, EMPTY_SPACE):
-                MoveWideBox(nextLeftPosition.GetNeighbour(Direction.Left.ToOffset()), nextLeftPosition, direction);
+                MoveWideBoxUpOrDown(nextLeftPosition.GetNeighbour(Direction.Left.ToOffset()), nextLeftPosition, direction);
                 break;
             case (EMPTY_SPACE, WIDE_BOX_LEFT):
-                MoveWideBox(nextRightPosition, nextRightPosition.GetNeighbour(Direction.Right.ToOffset()), direction);
+                MoveWideBoxUpOrDown(nextRightPosition, nextRightPosition.GetNeighbour(Direction.Right.ToOffset()), direction);
                 break;
             case (WIDE_BOX_RIGHT, WIDE_BOX_LEFT):
-                MoveWideBox(nextLeftPosition.GetNeighbour(Direction.Left.ToOffset()), nextLeftPosition, direction);
-                MoveWideBox(nextRightPosition, nextRightPosition.GetNeighbour(Direction.Right.ToOffset()), direction);
+                MoveWideBoxUpOrDown(nextLeftPosition.GetNeighbour(Direction.Left.ToOffset()), nextLeftPosition, direction);
+                MoveWideBoxUpOrDown(nextRightPosition, nextRightPosition.GetNeighbour(Direction.Right.ToOffset()), direction);
                 break;
             default:
                 throw new InvalidOperationException("Illegal move!!");
