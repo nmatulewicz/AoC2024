@@ -1,7 +1,4 @@
-﻿using AOC.ConsoleApp.Models;
-using System;
-
-namespace AOC.ConsoleApp.Models.Day06;
+﻿namespace AOC.ConsoleApp.Models.Day06;
 
 public class Map
 {
