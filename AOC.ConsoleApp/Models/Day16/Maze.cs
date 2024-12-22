@@ -1,0 +1,78 @@
+﻿
+using System.Reflection.Emit;
+
+namespace AOC.ConsoleApp.Models.Day16;
+
+public class Maze
+{
+    public const char WALL = '#';
+    public const char START_POSITION = 'S';
+    public const char END_POSITION = 'E';
+
+    private readonly Grid _grid;
+    private readonly Dictionary<(GridPosition<char> position, Direction incomingDirection), int> _scorePerGridPositionAndIncomingDirection;
+    private readonly GridPosition<char> _startPosition;
+    private readonly GridPosition<char> _endPosition;
+
+    public Maze(Grid grid)
+    {
+        _grid = grid;
+        _startPosition = grid.First(position => position.Value is START_POSITION);
+        _endPosition = grid.First(position => position.Value is END_POSITION);
+
+        _scorePerGridPositionAndIncomingDirection = InitializeScoreDictionaryWithMaxIntValue();
+        _scorePerGridPositionAndIncomingDirection[(_startPosition, Direction.Right)] = 0;
+    }
+
+    public int FindLowestPossibleScore()
+    {
+        var priorityQueue = new PriorityQueue<(GridPosition<char> position, Direction incomingDirection), int>();
+        priorityQueue.Enqueue((_startPosition, Direction.Right), 0);
+        
+        while (priorityQueue.Count > 0)
+        {
+            var (position, incomingDirection) = priorityQueue.Dequeue();
+            var score = _scorePerGridPositionAndIncomingDirection[(position, incomingDirection)];
+            if (position == _endPosition) return score;
+
+            foreach (var outgoingDirection in Enum.GetValues<Direction>())
+            {
+                var nextPosition = position.GetNeighbour(outgoingDirection.ToOffset());
+                if (!nextPosition.IsValidPosition || IsWall(nextPosition)) continue;
+
+                var currentScoreOfNextPosition = _scorePerGridPositionAndIncomingDirection[(nextPosition, outgoingDirection)];
+                var newScoreOfNextPosition = outgoingDirection == incomingDirection ? score + 1 : score + 1001;
+
+                if (newScoreOfNextPosition >= currentScoreOfNextPosition) continue;
+                
+                _scorePerGridPositionAndIncomingDirection[(nextPosition, outgoingDirection)] = newScoreOfNextPosition;
+                priorityQueue.Enqueue((nextPosition, outgoingDirection), newScoreOfNextPosition);
+            }
+        }
+
+        throw new Exception("Something went wrong. Priority queue should not be empty before finding end position.");
+    }
+
+    private Dictionary<(GridPosition<char> position, Direction incomingDirection), int> InitializeScoreDictionaryWithMaxIntValue()
+    {
+        var dictionary = new Dictionary<(GridPosition<char>, Direction), int>();
+        var nonWallPositions = _grid.Where(IsNotWall);
+        foreach (var position in nonWallPositions) {
+            foreach (var direction in Enum.GetValues<Direction>())
+            {
+                dictionary.Add((position, direction), int.MaxValue);
+            }
+        }
+        return dictionary;
+    }
+
+    private bool IsWall(GridPosition<char> position)
+    {
+        return position.Value is WALL;
+    }
+
+    private bool IsNotWall(GridPosition<char> position)
+    {
+        return !IsWall(position);
+    }
+}
