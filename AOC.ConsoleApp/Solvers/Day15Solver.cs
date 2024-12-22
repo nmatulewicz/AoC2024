@@ -3,6 +3,7 @@ using AOC.ConsoleApp.Models;
 using AOC.ConsoleApp.Models.Day15;
 
 namespace AOC.ConsoleApp.Solvers;
+
 public class Day15Solver : AbstractSolver
 {
     private Warehouse _warehouse;
