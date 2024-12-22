@@ -33,7 +33,7 @@ public class Maze
         {
             var (position, incomingDirection) = priorityQueue.Dequeue();
             var score = _scorePerGridPositionAndIncomingDirection[(position, incomingDirection)];
-            if (position == _endPosition) return score;
+            if (IsEnd(position)) return score;
 
             foreach (var outgoingDirection in Enum.GetValues<Direction>())
             {
@@ -51,6 +51,11 @@ public class Maze
         }
 
         throw new Exception("Something went wrong. Priority queue should not be empty before finding end position.");
+    }
+
+    private bool IsEnd(GridPosition<char> position)
+    {
+        return position.Value is END_POSITION;
     }
 
     private Dictionary<(GridPosition<char> position, Direction incomingDirection), int> InitializeScoreDictionaryWithMaxIntValue()
