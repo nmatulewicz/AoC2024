@@ -5,14 +5,14 @@ namespace AOC.ConsoleApp.Models.Day17;
 
 public class ComputerProgram
 {
-    public long RegisterA { get; set; }
-    public long RegisterB { get; set; }
-    public long RegisterC { get; set; }
+    public int RegisterA { get; set; }
+    public int RegisterB { get; set; }
+    public int RegisterC { get; set; }
 
     private int[] Instructions;
 
     private int _instructionPointer = 0;
-    private List<long> _output = new List<long>();
+    private List<int> _output = new List<int>();
 
     public ComputerProgram(int registerA, int registerB, int registerC, int[] instructions)
     {
@@ -26,7 +26,7 @@ public class ComputerProgram
         _output = [];
     }
 
-    public IEnumerable<long> Execute()
+    public IEnumerable<int> Execute()
     {
         while (_instructionPointer < Instructions.Length)
         {
@@ -36,6 +36,34 @@ public class ComputerProgram
         }
 
         return _output;
+    }
+
+    public bool OutputsCopyOfItself()
+    {
+        while (_instructionPointer < Instructions.Length)
+        {
+            var currentInstruction = (Instruction)Instructions[_instructionPointer];
+            ExecuteInstruction(currentInstruction);
+
+            if (currentInstruction == Instruction.Out && !OutputCanBecomeEqualToInput())
+            {
+                return false;
+            }
+            _instructionPointer += 2;
+        }
+
+        return _output.Count() == Instructions.Length && OutputCanBecomeEqualToInput();
+    }
+
+    private bool OutputCanBecomeEqualToInput()
+    {
+        if (Instructions.Length < _output.Count()) return false;
+
+        for (int i = 0; i < _output.Count(); i++) 
+        {
+            if (Instructions[i] != _output.ElementAt(i)) return false;
+        }
+        return true;
     }
 
     private void ExecuteInstruction(Instruction instruction)
@@ -72,25 +100,19 @@ public class ComputerProgram
         }
     }
 
-    private void Adv(long operandValue)
+    private void Adv(int operandValue)
     {
-        var numerator = RegisterA;
-        var denominator = (long) Math.Pow(2, operandValue);
-        RegisterA = numerator / denominator;
+        RegisterA = RegisterA >> operandValue;
     }
 
-    private void Bxl(long operandValue)
+    private void Bxl(int operandValue)
     {
-        var left = RegisterB;
-        var right = operandValue;
-
-        var xor = left ^ right;
-        RegisterB = xor;
+        RegisterB = RegisterB ^ operandValue;
     }
 
-    private void Bst(long operandValue)
+    private void Bst(int operandValue)
     {
-        RegisterB = operandValue % 8;
+        RegisterB = operandValue & 0b_0111;
     }
 
     private void Jnz(long operandValue)
@@ -106,26 +128,22 @@ public class ComputerProgram
         RegisterB = RegisterB ^ RegisterC;
     }
 
-    private void Out(long operandValue)
+    private void Out(int operandValue)
     {
-        _output.Add(operandValue % 8);
+        _output.Add(operandValue & 0b_0111);
     }
 
-    private void Bdv(long operandValue)
+    private void Bdv(int operandValue)
     {
-        var numerator = RegisterA;
-        var denominator = (long)Math.Pow(2, operandValue);
-        RegisterB = numerator / denominator;
+        RegisterB = RegisterA >> operandValue;
     }
 
-    private void Cdv(long operandValue)
+    private void Cdv(int operandValue)
     {
-        var numerator = RegisterA;
-        var denominator = (long)Math.Pow(2, operandValue);
-        RegisterC = numerator / denominator;
+        RegisterC = RegisterA >> operandValue;
     }
 
-    private long GetComboOperandValue(int operand)
+    private int GetComboOperandValue(int operand)
     {
         return operand switch
         {
