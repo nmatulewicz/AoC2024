@@ -18,7 +18,7 @@ public class Day18Solver : AbstractSolver
         {
             grid.SetValue(corruptedByte.row, corruptedByte.column, '#');
         }
-        var lengthShortestPath = FindLengthShortestPath(grid.GetPosition(0, 0), grid.GetPosition(69, 69), grid);
+        var lengthShortestPath = FindLengthShortestPath(grid.GetPosition(0, 0), grid.GetPosition(70, 70), grid);
         return lengthShortestPath.ToString();
     }
 
@@ -32,7 +32,7 @@ public class Day18Solver : AbstractSolver
 
         while(priorityQueue.TryDequeue(out var position, out var pathLength))
         {
-            if (position.Row == 70 && position.Column == 70) return pathLength;
+            if (position.Equals(end)) return pathLength;
 
             var neighbours = position.GetAllDirectNeighbours().Where(neighbour => neighbour.Value != '#');
             foreach (var neighbour in neighbours)
