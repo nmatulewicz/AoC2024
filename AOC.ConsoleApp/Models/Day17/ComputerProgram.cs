@@ -63,6 +63,8 @@ public class ComputerProgram
         {
             if (Instructions[i] != _output.ElementAt(i)) return false;
         }
+
+        //Console.WriteLine(Convert.ToString(RegisterA, 2));
         return true;
     }
 

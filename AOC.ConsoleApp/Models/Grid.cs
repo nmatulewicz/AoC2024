@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 
 namespace AOC.ConsoleApp.Models;
@@ -8,6 +7,14 @@ public class Grid : Grid<char>
 {
     public Grid(IEnumerable<IEnumerable<char>> data) : base(data)
     {
+    }
+
+    public static Grid GenerateGrid(char filling, int rows, int columns) 
+    {
+        var line = new string(filling, columns);
+        var lines = new List<string>();
+        while (lines.Count < rows) lines.Add(line);
+        return new Grid(lines);
     }
 
     public override string ToString()
