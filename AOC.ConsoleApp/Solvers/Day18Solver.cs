@@ -22,6 +22,24 @@ public class Day18Solver : AbstractSolver
         return lengthShortestPath.ToString();
     }
 
+    public override string SolveSecondChallenge()
+    {
+        var grid = Grid.GenerateGrid('.', 71, 71);
+        foreach (var corruptedByte in _corruptedBytes)
+        {
+            grid.SetValue(corruptedByte.row, corruptedByte.column, '#');
+            try
+            {
+                FindLengthShortestPath(grid.GetPosition(0, 0), grid.GetPosition(70, 70), grid);
+            }
+            catch (Exception e)
+            {
+                return $"({corruptedByte.column},{corruptedByte.row})";
+            }
+        }
+        throw new Exception("If this line was reached, there was still a path after placing all corrupted bytes.");
+    }
+
     private int FindLengthShortestPath(GridPosition<char> start, GridPosition<char> end, Grid grid)
     {
         var priorityQueue = new PriorityQueue<GridPosition<char>, int>();
@@ -47,10 +65,5 @@ public class Day18Solver : AbstractSolver
         }
 
         throw new Exception("Queue should not be empty before reaching end.");
-    }
-
-    public override string SolveSecondChallenge()
-    {
-        throw new NotImplementedException();
     }
 }
