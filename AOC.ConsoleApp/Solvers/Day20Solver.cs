@@ -37,6 +37,25 @@ public class Day20Solver : AbstractSolver
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        var map = new Map(new Grid(_lines));
+        var lengthShortestPathWithoutCheats = map.GetLengthShortestPath();
+        var shortestPath = map.GetShortestPath().ToArray();
+
+        var numberOfCheatsSavingAtLeast100Picoseconds = 0;
+        foreach (var (position1, indexPosition1) in shortestPath.Select((position, index) => (position, index)))
+        {
+            foreach (var position2 in shortestPath.Skip(indexPosition1 + 1 + 100))
+            {
+                if (ManhattanDistance(position1, position2) <= 50)
+                    numberOfCheatsSavingAtLeast100Picoseconds++;
+            }
+        }
+        return numberOfCheatsSavingAtLeast100Picoseconds.ToString();
+        // 8024649 ==> Too high
+    }
+
+    private int ManhattanDistance(GridPosition<char> position1, GridPosition<char> position2)
+    {
+        return Math.Abs(position2.Row - position1.Row) + Math.Abs(position2.Column - position1.Column);
     }
 }
