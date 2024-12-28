@@ -1,13 +1,11 @@
-﻿using AOC.ConsoleApp.Models;
-
-namespace AOC.ConsoleApp.Solvers;
+﻿namespace AOC.ConsoleApp.Solvers;
 
 public class Day19Solver : AbstractSolver
 {
     private IEnumerable<string> _towels;
     private IEnumerable<string> _designs;
     private IDictionary<string, long> _numberOfWaysDictionary;
-
+    
     public Day19Solver(IEnumerable<string> lines) : base(lines)
     {
         _towels = GetTowels();

@@ -1,10 +1,14 @@
-﻿namespace AOC.ConsoleApp.Models;
+﻿
+using System.Linq;
+
+namespace AOC.ConsoleApp.Models;
 
 public class Map
 {
     public const char START = 'S';
     public const char END = 'E';
     public const char WALL = '#';
+    public const char EMPTY_SPACE = '.';
 
     private readonly Grid _map;
 
@@ -41,5 +45,10 @@ public class Map
         }
 
         throw new Exception("Queue should not be empty before reaching end.");
+    }
+
+    public IEnumerable<GridPosition<char>> GetWalls()
+    {
+        return _map.Where(position => position.Value == WALL);
     }
 }
