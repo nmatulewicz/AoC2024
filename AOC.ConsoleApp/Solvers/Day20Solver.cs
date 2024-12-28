@@ -1,11 +1,12 @@
 ﻿
 using AOC.ConsoleApp.Models;
-using System.ComponentModel.Design;
 
 namespace AOC.ConsoleApp.Solvers;
 
 public class Day20Solver : AbstractSolver
 {
+    public const int TIME_TO_SAVE = 72;
+    public const int CHEATING_TIME = 20;
     public Day20Solver(IEnumerable<string> lines) : base(lines)
     {
 
@@ -28,7 +29,7 @@ public class Day20Solver : AbstractSolver
                 {
                     var indexInShortestPath2 = shortestPath.IndexOf(neighbour2);
 
-                    if (indexInShortestPath2 >= indexInShortestPath1 + 101) numberOfCheatsSavingAtLeast100Picoseconds++;
+                    if (indexInShortestPath2 >= indexInShortestPath1 + TIME_TO_SAVE + 1) numberOfCheatsSavingAtLeast100Picoseconds++;
                 }
             }
         }
@@ -48,7 +49,7 @@ public class Day20Solver : AbstractSolver
             foreach (var (position2, indexPosition2) in shortestPath.Select((position, index) => (position, index)))
             {
                 var originalTimeDelta = indexPosition2 - indexPosition1;
-                if (originalTimeDelta < 102) continue;
+                if (originalTimeDelta < TIME_TO_SAVE + 2) continue;
 
                 var neighbours1 = new List<GridPosition<char>>();
                 var neighbours2 = new List<GridPosition<char>>();
@@ -77,10 +78,12 @@ public class Day20Solver : AbstractSolver
                 {
                     if (neighbour1.Value != Map.WALL || neighbour2.Value != Map.WALL) return false;
                     var manhattanDistance = ManhattanDistance(neighbour1, neighbour2);
-                    if (manhattanDistance > 50 - 2) return false;
+                    var newTimeDelta = manhattanDistance + 2;
+                    if (newTimeDelta > CHEATING_TIME) return false;
 
-                    var savedTime = originalTimeDelta - manhattanDistance;
-                    return savedTime >= 100;
+
+                    var savedTime = originalTimeDelta - newTimeDelta;
+                    return savedTime >= TIME_TO_SAVE;
                 })))
                     numberOfCheatsSavingAtLeast100Picoseconds++;
 
