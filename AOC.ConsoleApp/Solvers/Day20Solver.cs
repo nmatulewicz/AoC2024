@@ -44,17 +44,25 @@ public class Day20Solver : AbstractSolver
         var numberOfCheatsSavingAtLeast100Picoseconds = 0;
         foreach (var (position1, indexPosition1) in shortestPath.Select((position, index) => (position, index)))
         {
-            var neighbouringWalls1 = position1.GetAllDirectNeighbours().Where(neighbour => neighbour.Value == Map.WALL);
-            foreach (var position2 in shortestPath.Skip(indexPosition1 + 1 + 100))
+            //var neighbouringWalls1 = position1.GetAllDirectNeighbours().Where(neighbour => neighbour.Value == Map.WALL);
+            foreach (var (position2, indexPosition2) in shortestPath.Select((position, index) => (position, index)))
             {
-                var neighbouringWalls2 = position2.GetAllDirectNeighbours().Where(neighbour => neighbour.Value == Map.WALL);
-                if (neighbouringWalls1.Any(wall1 => neighbouringWalls2.Any(wall2 => ManhattanDistance(wall1, wall2) <= 50 - 1 - 1)))
-                    numberOfCheatsSavingAtLeast100Picoseconds++;
+                //var neighbouringWalls2 = position2.GetAllDirectNeighbours().Where(neighbour => neighbour.Value == Map.WALL);
+                //if (neighbouringWalls1.Any(wall1 => neighbouringWalls2.Any(wall2 => ManhattanDistance(wall1, wall2) <= 50 - 1 - 1)))
+                //    numberOfCheatsSavingAtLeast100Picoseconds++;
+                var manhattanDistance = ManhattanDistance(position1, position2);
+                if (manhattanDistance > 50) continue;
+
+                var originalTimeDelta = indexPosition2 - indexPosition1;
+                var savedTime = originalTimeDelta - manhattanDistance;
+
+                if (savedTime >= 100) numberOfCheatsSavingAtLeast100Picoseconds++;
             }
         }
         return numberOfCheatsSavingAtLeast100Picoseconds.ToString();
         // 8024649 ==> Too high
         // 7921150 ==> Too high
+        // 7813830 ==> Too high
     }
 
     private int ManhattanDistance(GridPosition<char> position1, GridPosition<char> position2)
