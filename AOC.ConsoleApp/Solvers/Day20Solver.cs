@@ -1,5 +1,6 @@
 ﻿
 using AOC.ConsoleApp.Models;
+using System.ComponentModel.Design;
 
 namespace AOC.ConsoleApp.Solvers;
 
@@ -14,18 +15,22 @@ public class Day20Solver : AbstractSolver
     {
         var map = new Map(new Grid(_lines));
         var lengthShortestPathWithoutCheats = map.GetLengthShortestPath();
+        var shortestPath = map.GetShortestPath().ToList();
 
         var numberOfCheatsSavingAtLeast100Picoseconds = 0;
         foreach (var position in map.GetWalls())
         {
-            position.Value = Map.EMPTY_SPACE;
-            var lengthShortestPath = map.GetLengthShortestPath();
-            var difference = lengthShortestPathWithoutCheats - lengthShortestPath;
-            if (difference >= 100)
+            var neighboursInShortestPath = position.GetAllDirectNeighbours().Where(shortestPath.Contains).ToArray();
+            foreach (var neighbour1 in neighboursInShortestPath)
             {
-                numberOfCheatsSavingAtLeast100Picoseconds++;
+                var indexInShortestPath1 = shortestPath.IndexOf(neighbour1);
+                foreach (var neighbour2 in neighboursInShortestPath)
+                {
+                    var indexInShortestPath2 = shortestPath.IndexOf(neighbour2);
+
+                    if (indexInShortestPath2 >= indexInShortestPath1 + 101) numberOfCheatsSavingAtLeast100Picoseconds++;
+                }
             }
-            position.Value = Map.WALL;
         }
         return numberOfCheatsSavingAtLeast100Picoseconds.ToString();
     }

@@ -12,6 +12,8 @@ public class Map
 
     private readonly Grid _map;
 
+    public bool IsWall { get; internal set; }
+
     public Map(Grid map)
     {
         _map = map;
