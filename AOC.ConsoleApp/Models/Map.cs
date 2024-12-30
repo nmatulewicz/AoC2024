@@ -1,7 +1,4 @@
-﻿
-using System.Linq;
-
-namespace AOC.ConsoleApp.Models;
+﻿namespace AOC.ConsoleApp.Models;
 
 public class Map
 {

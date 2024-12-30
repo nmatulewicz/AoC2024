@@ -20,22 +20,23 @@ public class Day21Solver : AbstractSolver
             total += complexity;
         }
         return total.ToString();
-
         // 112690 ==> Too high
     }
 
     private IEnumerable<char> GetShortestSequence(string line)
     {
-        var numericKeypad = new NumericKeypad();
-        var buttonsPressedByRobot1 = line.Aggregate(string.Empty, (totalRoute, nextDestination) => totalRoute + numericKeypad.MoveRobotTo(nextDestination));
+        //var numericKeypad = new NumericKeypad();
+        //var buttonsPressedByRobot1 = line.Aggregate(string.Empty, (totalRoute, nextDestination) => totalRoute + numericKeypad.MoveRobotTo(nextDestination));
 
-        var firstDirectionalKeypad = new DirectionalKeypad();
-        var buttonsPressedByRobot2 = buttonsPressedByRobot1.Aggregate(string.Empty, (totalRoute, nextDestination) => totalRoute + firstDirectionalKeypad.MoveRobotTo(nextDestination));
+        //var firstDirectionalKeypad = new DirectionalKeypad();
+        //var buttonsPressedByRobot2 = buttonsPressedByRobot1.Aggregate(string.Empty, (totalRoute, nextDestination) => totalRoute + firstDirectionalKeypad.MoveRobotTo(nextDestination));
 
-        var secondDirectionalKeypad = new DirectionalKeypad();
-        var buttonsPressedByHuman = buttonsPressedByRobot2.Aggregate(string.Empty, (totalRoute, nextDestination) => totalRoute + secondDirectionalKeypad.MoveRobotTo(nextDestination));
+        //var secondDirectionalKeypad = new DirectionalKeypad();
+        //var buttonsPressedByHuman = buttonsPressedByRobot2.Aggregate(string.Empty, (totalRoute, nextDestination) => totalRoute + secondDirectionalKeypad.MoveRobotTo(nextDestination));
 
-        return buttonsPressedByHuman;
+        //return buttonsPressedByHuman;
+
+        return new NumericKeypad().GetShortestRoute(line, levels: 3);
     }
 
     public override string SolveSecondChallenge()

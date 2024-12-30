@@ -1,4 +1,5 @@
-﻿namespace AOC.ConsoleApp.Models.Day21;
+﻿
+namespace AOC.ConsoleApp.Models.Day21;
 
 public class NumericKeypad : Keypad
 {
