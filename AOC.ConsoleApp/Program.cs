@@ -1,7 +1,7 @@
 ﻿using AOC.ConsoleApp.Solvers;
 
-var lines = ReadLines("../../../Inputs/20.txt");
-AbstractSolver solver = new Day20Solver(lines);
+var lines = ReadLines("../../../Inputs/21.txt");
+AbstractSolver solver = new Day21Solver(lines);
 
 Console.WriteLine($"First solution: {solver.SolveFirstChallenge()}");
 Console.WriteLine($"Second solution: {solver.SolveSecondChallenge()}");

@@ -2,7 +2,6 @@
 using AOC.ConsoleApp.Models;
 
 namespace AOC.ConsoleApp.Solvers;
-
 public class Day20Solver : AbstractSolver
 {
     public const int TIME_TO_SAVE = 100;
