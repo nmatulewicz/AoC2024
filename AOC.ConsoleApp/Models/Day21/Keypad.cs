@@ -92,30 +92,6 @@ public abstract class Keypad
         return routes.Distinct();
     }
 
-    private string GetBestRoute(GridPosition<char> startPosition, GridPosition<char> endPosition)
-    {
-        var columnDelta = endPosition.Column - startPosition.Column;
-        var moveColumnChar = columnDelta > 0 ? '>' : '<';
-        var horizontalMovementPart = new string(moveColumnChar, Math.Abs(columnDelta));
-
-        var rowDelta = endPosition.Row - startPosition.Row;
-        var moveRowChar = rowDelta > 0 ? 'v' : '^';
-        var verticalMovementPart = new string(moveRowChar, Math.Abs(rowDelta));
-
-        var routes = new List<string>();
-        if ( startPosition.GetNeighbour(0, columnDelta).Value != GAP)
-        {
-            var routeMovingHorizontallyFirst = horizontalMovementPart + verticalMovementPart + ACTIVATE_BUTTON;
-            routes.Add(routeMovingHorizontallyFirst);
-        }
-        if (true || startPosition.GetNeighbour(rowDelta, 0).Value != GAP)
-        {
-            var routeMovingVerticallyFirst = verticalMovementPart + horizontalMovementPart + ACTIVATE_BUTTON;
-            routes.Add(routeMovingVerticallyFirst);
-        }
-        return routes.First();
-    }
-
     private bool IsActiveButton(GridPosition<char> position)
     {
         return position.Value == ACTIVATE_BUTTON;
