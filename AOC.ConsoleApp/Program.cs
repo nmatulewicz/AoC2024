@@ -1,6 +1,6 @@
 ﻿using AOC.ConsoleApp.Solvers;
 
-var lines = ReadLines("../../../Inputs/21.txt");
+var lines = ReadLines("../../../Inputs/21_example.txt");
 AbstractSolver solver = new Day21Solver(lines);
 
 Console.WriteLine($"First solution: {solver.SolveFirstChallenge()}");

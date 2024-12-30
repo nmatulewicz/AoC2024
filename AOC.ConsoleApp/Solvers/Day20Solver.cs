@@ -8,7 +8,7 @@ public class Day20Solver : AbstractSolver
     public const int CHEATING_TIME = 20;
     public Day20Solver(IEnumerable<string> lines) : base(lines)
     {
-
+        
     }
 
     public override string SolveFirstChallenge()
