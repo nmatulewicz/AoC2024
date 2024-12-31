@@ -5,6 +5,8 @@ public abstract class Keypad
     public const char ACTIVATE_BUTTON = 'A';
     public const char GAP = '#';
 
+    public static IDictionary<(string buttons, int levels), IEnumerable<(string routePart, int count)>> ShortestRouteDictionary = new Dictionary<(string, int), IEnumerable<(string, int)>>();
+
     private readonly Grid _keypad;
     private GridPosition<char> _currentPosition;
 
@@ -29,34 +31,51 @@ public abstract class Keypad
         return GetSimplestRoutes(startPosition, endPosition).First();
     }
 
-    public string GetShortestRoute(string buttons, int levels)
+    public IEnumerable<(string routePart, int count)> GetShortestRoute(string buttons, int levels)
     {
+        if (ShortestRouteDictionary.TryGetValue((buttons, levels), out var shortestRoute))
+        {
+            return shortestRoute;
+        }
+
         if (levels == 1)
         {
-            var route = string.Empty;
+            var routeParts = new List<string>();
             var keypad = new DirectionalKeypad();
             foreach (var button in buttons)
             {
-                route += keypad.MoveRobotTo(button);
+                routeParts.Add(keypad.MoveRobotTo(button));
             }
+            var route = routeParts.GroupBy(routePart => routePart).Select(grouping => (grouping.Key, grouping.Count()));
+            ShortestRouteDictionary.Add((buttons, levels), route);
             return route;
         }
 
-        var shortestRoute = string.Empty;
+        var shortestRouteParts = new List<(string routePart, int count)>();
         foreach (var button in buttons)
         {
             var routes = GetSimplestRoutesTo(button);
 
-            shortestRoute += routes.Select(route =>
+            var shortestRouteForButton = routes.Select(route =>
             {
                 var keypad = new DirectionalKeypad();
                 var shortestRoute = keypad.GetShortestRoute(route, levels - 1);
                 return shortestRoute;
-            }).MinBy(route => route.Length);
+            }).MinBy(GetTotalLength);
+            shortestRouteParts.AddRange(shortestRouteForButton!);
             MoveRobotTo(button);
         }
 
-        return shortestRoute;
+        shortestRoute = shortestRouteParts
+            .GroupBy(tuple => tuple.routePart)
+            .Select(grouping => (grouping.Key, grouping.Sum(tuple => tuple.count)));
+        ShortestRouteDictionary.Add((buttons, levels), shortestRoute);
+        return shortestRouteParts;
+    }
+
+    private long GetTotalLength(IEnumerable<(string routePart, int count)> route)
+    {
+        return route.Sum(tuple => (long) tuple.routePart.Length * tuple.count);
     }
 
     private IEnumerable<string> GetSimplestRoutesTo(char destination)
