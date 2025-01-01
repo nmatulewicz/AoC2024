@@ -27,29 +27,39 @@ public class Day22Solver : AbstractSolver
 
     public override string SolveSecondChallenge()
     {
-        var prices = CalculatePrices2();
+        var prices = CalculatePrices2().Select(list => list.ToArray()).ToArray();
         var deltas = CalculateDeltas(prices);
         var sequences = GetSequences(deltas);
-        var sequenceOptions = sequences.SelectMany(_ => _).Distinct();
-
-        var maximumProfit = 0;
-        foreach(var option in sequenceOptions)
-        {
-            var totalProfit = 0;
-            for (var lineIndex = 0; lineIndex < _secretNumbers.Count(); lineIndex++)
+        var sequenceDictionary = ToDictionary(sequences);
+        var groupingsBySequence = sequenceDictionary.Keys
+            .GroupBy(key => key.sequence)
+            .Select(grouping => (grouping.Key, grouping.Sum(tuple =>
             {
-                var relevantSequences = sequences[lineIndex];
-                var salesIndex = relevantSequences
-                    .Select((sequence, index) => (sequence, index))
-                    .FirstOrDefault(tuple => tuple.sequence == option).index;
-                if (salesIndex < 4) continue;
+                var lineIndex = tuple.lineIndex;
+                var roundIndex = sequenceDictionary[(lineIndex, grouping.Key)];
+                var price = prices[lineIndex][roundIndex];
+                return price;
+            })));
+        var bestSequenceAndPrice = groupingsBySequence.MaxBy(tuple => tuple.Item2);
+        return bestSequenceAndPrice.Item2.ToString();
 
-                totalProfit += prices.ElementAt(lineIndex).ElementAt(salesIndex);
+        // 1766 => too low
+        // 1846 => too low
+    }
+
+    private IDictionary<(int lineIndex, (int, int, int, int) sequence), int> ToDictionary((int, int, int, int)[][] sequences)
+    {
+        var dictionary = new Dictionary<(int lineIndex, (int, int, int, int) sequence), int>();
+        for (var lineIndex = 0; lineIndex < sequences.Length; lineIndex++)
+        {
+            var relevantSequences = sequences[lineIndex];
+            for (var round = 4; round < relevantSequences.Length; round++)
+            {
+                dictionary.TryAdd((lineIndex, relevantSequences[round]), round);
             }
-            if (totalProfit > maximumProfit) 
-                maximumProfit = totalProfit;
         }
-        return maximumProfit.ToString();
+
+        return dictionary;
     }
 
     private (int, int, int, int)[][] GetSequences(int[][] deltas)
@@ -60,7 +70,7 @@ public class Day22Solver : AbstractSolver
             sequences[lineIndex] = new (int, int, int, int)[2000];
         }
 
-        for (var lineIndex = 4; lineIndex < sequences.Length; lineIndex++)
+        for (var lineIndex = 0; lineIndex < sequences.Length; lineIndex++)
         {
             var relevantDeltas = deltas[lineIndex];
             for (var round = 4; round < relevantDeltas.Length; round++)
