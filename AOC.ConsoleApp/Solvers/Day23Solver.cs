@@ -30,13 +30,18 @@ public class Day23Solver : AbstractSolver
 
     public override string SolveSecondChallenge()
     {
-        var interconnectedGroups = _lanParty.GetInterconnectedGroups();
-        var lanPartyOrderedByNameOfComputer = interconnectedGroups
-            .MaxBy(group => group.Count())!
-            .OrderBy(computer => computer.Name);
-        var password = string.Join(',', lanPartyOrderedByNameOfComputer);
+        var maxGroup = _lanParty.GetInterconnectedGroupsMaxCount().Order();
+        var password = string.Join(',', maxGroup);
         return password;
 
+        //var interconnectedGroups = _lanParty.GetInterconnectedGroups();
+        //var lanPartyOrderedByNameOfComputer = interconnectedGroups
+        //    .MaxBy(group => group.Count())!
+        //    .OrderBy(computer => computer.Name);
+        //var password = string.Join(',', lanPartyOrderedByNameOfComputer);
+        //return password;
+
+        // gt,ha,ir,jn,jq,kb,lr,lt,nl,oj,pp,qh,vy
         // ep,ik,jr,mb,qm,rl,rm,uw,wy,xa,xt,zh,zj ==> wrong
     }
 }

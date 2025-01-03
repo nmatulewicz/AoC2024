@@ -7,7 +7,7 @@ public class LanParty : IEquatable<LanParty>
     private readonly IDictionary<Computer, List<Computer>> _connections;
     private readonly IEnumerable<Computer> _computers;
 
-    public static IDictionary<LanParty, int> InterconnectedGroupsMaxCountDictionary = new Dictionary<LanParty, int>();
+    public static IDictionary<LanParty, IEnumerable<Computer>> InterconnectedGroupsMaxDictionary = new Dictionary<LanParty, IEnumerable<Computer>>();
     public static IDictionary<LanParty, List<List<Computer>>> InterconnectedGroupsDictionary = new Dictionary<LanParty, List<List<Computer>>>();
 
     public LanParty(IEnumerable<(Computer, Computer)> connections)
@@ -80,29 +80,31 @@ public class LanParty : IEquatable<LanParty>
         return interconnectedGroups;
     }
 
-    public int GetInterconnectedGroupsMaxCount()
+    public IEnumerable<Computer> GetInterconnectedGroupsMaxCount()
     {
-        if (InterconnectedGroupsMaxCountDictionary.TryGetValue(this, out var maxCount))
-            return maxCount;
+        if (InterconnectedGroupsMaxDictionary.TryGetValue(this, out var maxGroup))
+            return maxGroup;
 
-        maxCount = 0;
+        maxGroup = new List<Computer>();
         if (_computers.Count() <= 1)
         {
-            return _computers.Count();
+            return _computers;
         }
         foreach (var (computer, connectedComputers) in _connections)
         {
+            if (connectedComputers.Count + 1 <= maxGroup.Count()) continue;
+
             var connections = connectedComputers.ToDictionary(
                 connectedComputer => connectedComputer,
                 connectedComputer => _connections[connectedComputer].Where(computer => connectedComputers.Contains(computer)).ToList());
             var lanParty = new LanParty(connections);
 
-            var localMax = lanParty.GetInterconnectedGroupsMaxCount() + 1;
-            if (localMax > maxCount) 
-                maxCount = localMax;
+            var localMax = lanParty.GetInterconnectedGroupsMaxCount();
+            if (localMax.Count() + 1 > maxGroup.Count())
+                maxGroup = localMax.Append(computer);
         }
-        InterconnectedGroupsMaxCountDictionary.Add(this, maxCount);
-        return maxCount;
+        InterconnectedGroupsMaxDictionary.Add(this, maxGroup);
+        return maxGroup;
     }
 
     public bool Equals(LanParty? other)
