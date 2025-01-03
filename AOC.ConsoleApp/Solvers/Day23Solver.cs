@@ -41,7 +41,7 @@ public class Day23Solver : AbstractSolver
         //var password = string.Join(',', lanPartyOrderedByNameOfComputer);
         //return password;
 
-        // gt,ha,ir,jn,jq,kb,lr,lt,nl,oj,pp,qh,vy
+        // gt,ha,ir,jn,jq,kb,lr,lt,nl,oj,pp,qh,vy ==> ??
         // ep,ik,jr,mb,qm,rl,rm,uw,wy,xa,xt,zh,zj ==> wrong
     }
 }
