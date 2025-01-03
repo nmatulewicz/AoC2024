@@ -36,5 +36,7 @@ public class Day23Solver : AbstractSolver
             .OrderBy(computer => computer.Name);
         var password = string.Join(',', lanPartyOrderedByNameOfComputer);
         return password;
+
+        // ep,ik,jr,mb,qm,rl,rm,uw,wy,xa,xt,zh,zj ==> wrong
     }
 }

@@ -1,12 +1,17 @@
 ﻿namespace AOC.ConsoleApp.Models.Day23;
 
-public class Computer : IEquatable<Computer>
+public class Computer : IEquatable<Computer>, IComparable<Computer>
 {
     public readonly string Name;
 
     public Computer(string name)
     {
         Name = name;
+    }
+
+    public int CompareTo(Computer? other)
+    {
+        return Name.CompareTo(other?.Name);
     }
 
     public override bool Equals(object? obj)
