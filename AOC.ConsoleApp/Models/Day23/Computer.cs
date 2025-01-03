@@ -23,4 +23,9 @@ public class Computer : IEquatable<Computer>
     {
         return Name.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

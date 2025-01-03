@@ -1,4 +1,5 @@
 ﻿
+
 namespace AOC.ConsoleApp.Models.Day23;
 
 public class LanParty
@@ -16,6 +17,12 @@ public class LanParty
             _connections[computer1].Add(computer2);
             _connections[computer2].Add(computer1);
         }
+    }
+
+    public LanParty(IDictionary<Computer, List<Computer>> connections)
+    {
+        _connections = connections;
+        _computers = connections.Keys;
     }
 
     public IEnumerable<(Computer, Computer, Computer)> GetAllInterconnectedGroupsOfThreeComputers()
@@ -42,5 +49,23 @@ public class LanParty
     public bool AreConnected(Computer computer1,  Computer computer2)
     {
         return _connections[computer1].Contains(computer2);
+    }
+
+    public IEnumerable<IEnumerable<Computer>> GetInterconnectedGroups()
+    {
+        var interconnectedGroups = new List<HashSet<Computer>>();
+        foreach (var (computer, connectedComputers) in _connections)
+        {
+            if (connectedComputers.Count == 0)
+                interconnectedGroups.Add(new HashSet<Computer> { computer });
+
+            var connections = connectedComputers.ToDictionary(
+                connectedComputer => connectedComputer,
+                connectedComputer => _connections[connectedComputer].Where(computer => connectedComputers.Contains(computer)).ToList());
+            var lanParty = new LanParty(connections);
+
+            return [..lanParty.GetInterconnectedGroups(), connectedComputers];
+        }
+        return interconnectedGroups;
     }
 }

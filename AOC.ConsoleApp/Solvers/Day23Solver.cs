@@ -30,6 +30,11 @@ public class Day23Solver : AbstractSolver
 
     public override string SolveSecondChallenge()
     {
-        throw new NotImplementedException();
+        var interconnectedGroups = _lanParty.GetInterconnectedGroups();
+        var lanPartyOrderedByNameOfComputer = interconnectedGroups
+            .MaxBy(group => group.Count())!
+            .OrderBy(computer => computer.Name);
+        var password = string.Join(',', lanPartyOrderedByNameOfComputer);
+        return password;
     }
 }
